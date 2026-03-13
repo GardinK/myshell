@@ -1,1 +1,6 @@
-a.out\nmain
+a.out
+main
+myshell
+ls
+gcc
+*.o
