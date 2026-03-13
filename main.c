@@ -1,13 +1,18 @@
 #include <stdio.h> 
+#include <stdlib.h>
 #include <string.h> 
+#include <unistd.h>
+#include <sys/wait.h>
 
 int main() {
 	char buffer [1024];
 	char *args[64];
 	char *token;
-	int i = 0;
+	int i;
 	
 	while (1) {
+		
+		i = 0;
 		printf("myshell> ");
 		fgets(buffer, 1024, stdin);
 
@@ -23,6 +28,17 @@ int main() {
 	}
 		
 	args[i] = NULL;
+
+	pid_t pid = fork();
+
+	if (pid == 0) {
+		execvp(args[0], args);
+		perror(args[0]);
+		exit(1);
+	} else {
+		int status;
+		waitpid(pid, &status, 0);
+	}
 
 	}
 	return 0;
