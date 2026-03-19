@@ -21,25 +21,39 @@ int main() {
 		if (strcmp(buffer, "exit") == 0 ) {
 			break;
 		}
-	token = strtok(buffer, " ");
-	while (token != NULL) {
-		args[i++] = token;
-		token = strtok(NULL, " ");
-	}
-		
-	args[i] = NULL;
+		token = strtok(buffer, " ");
+		while (token != NULL) {
+			args[i++] = token;
+			token = strtok(NULL, " ");
+		}
+			
+		args[i] = NULL;
 
-	pid_t pid = fork();
+		if (strcmp(args[0], "cd") == 0) {
+			char *path;
+			if (args[1] == NULL)
+				path = getenv("HOME");
+			else
+				path = args[1];
+			
+			if (chdir(path) == -1) {
+				perror(args[1]);
+			}	
+		} else {
 
-	if (pid == 0) {
-		execvp(args[0], args);
-		perror(args[0]);
-		exit(1);
-	} else {
-		int status;
-		waitpid(pid, &status, 0);
+			pid_t pid = fork();
+
+			if (pid == 0) {
+				execvp(args[0], args);
+				perror(args[0]);
+				exit(1);
+			} else {
+				int status;
+				waitpid(pid, &status, 0);
+			}	
+		}
 	}
 
-	}
 	return 0;
+
 }
